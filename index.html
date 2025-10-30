@@ -5,14 +5,54 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Digit - Self-Custody Crypto Wallet</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-color: #f5f5f5;
+      --text-color: #0b0b0b;
+      --link-color: #007bff;
+      --screen-bg: #fff;
+      --nav-bg: #111;
+      --glow: 0 0 10px rgba(0, 123, 255, 0.6);
+      --footer-bg: #e9e9e9;
+      --footer-text: #555;
+    }
+
+    body.dark {
+      --bg-color: #0b0b0b;
+      --text-color: #f5f5f5;
+      --link-color: #4a90e2;
+      --screen-bg: #1a1a1a;
+      --nav-bg: #000;
+      --glow: 0 0 20px rgba(74, 144, 226, 0.8);
+      --footer-bg: #111;
+      --footer-text: #aaa;
+    }
+
+    /* Animated gradient background */
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      background-color: #fafafa;
-      color: #0b0b0b;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+      background: linear-gradient(-45deg, #1a1a1a, #0d0d0d, #121212, #141414);
+      background-size: 400% 400%;
+      color: var(--text-color);
+      animation: gradientShift 15s ease infinite;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    body.light {
+      background: linear-gradient(-45deg, #e9f2ff, #f9f9f9, #e0f7ff, #f4f4f4);
+      background-size: 400% 400%;
+      animation: gradientShift 20s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     header {
@@ -21,24 +61,32 @@
       justify-content: space-between;
       align-items: center;
       padding: 20px 50px;
-      background-color: #fff;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
       position: sticky;
       top: 0;
       z-index: 100;
     }
 
     header h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #0b0b0b;
+      font-size: 1.8rem;
+      color: var(--link-color);
+      text-shadow: var(--glow);
+      letter-spacing: 1px;
     }
 
     header a {
       text-decoration: none;
-      color: #1a73e8;
-      font-weight: 500;
+      color: var(--text-color);
+      font-weight: 600;
       font-size: 1rem;
+      transition: color 0.3s;
+    }
+
+    header a:hover {
+      color: var(--link-color);
+      text-shadow: var(--glow);
     }
 
     main {
@@ -46,40 +94,44 @@
       justify-content: center;
       align-items: center;
       flex: 1;
-      padding: 50px;
-      gap: 60px;
+      padding: 60px;
+      gap: 80px;
+      text-align: left;
     }
 
     .text-section {
-      max-width: 400px;
+      max-width: 450px;
     }
 
     .text-section h2 {
-      font-size: 2.5rem;
+      font-size: 2.6rem;
       font-weight: 700;
-      margin-bottom: 10px;
+      color: var(--text-color);
+      text-shadow: var(--glow);
     }
 
     .text-section p {
       font-size: 1.1rem;
       line-height: 1.6;
-      color: #333;
       margin-bottom: 25px;
+      opacity: 0.9;
     }
 
     .text-section button {
-      background-color: #1a73e8;
-      color: #fff;
+      background: var(--link-color);
       border: none;
-      border-radius: 8px;
-      padding: 14px 28px;
-      font-size: 1rem;
+      border-radius: 10px;
+      color: #fff;
+      padding: 14px 30px;
+      font-size: 1.1rem;
       cursor: pointer;
-      transition: background 0.3s;
+      box-shadow: var(--glow);
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
     .text-section button:hover {
-      background-color: #0c5ac3;
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(74, 144, 226, 0.8);
     }
 
     /* iPhone Mockup */
@@ -89,12 +141,10 @@
       height: 640px;
       border: 12px solid #000;
       border-radius: 40px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      background-color: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      box-shadow: 0 0 30px rgba(0,0,0,0.6), var(--glow);
+      background: #000;
       overflow: hidden;
+      transition: all 0.5s;
     }
 
     .iphone-notch {
@@ -113,129 +163,113 @@
     .screen {
       width: 94%;
       height: 94%;
-      background: #0b0b0b;
+      margin: auto;
+      background: var(--screen-bg);
       border-radius: 28px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      overflow: hidden;
-      position: relative;
+      transition: background 0.5s;
     }
 
-    .wallet-header {
-      text-align: center;
+    .view {
+      flex: 1;
       padding: 20px;
-      color: #fff;
-      font-weight: 600;
-      font-size: 1.1rem;
+      opacity: 0;
+      transform: translateX(100%);
+      transition: all 0.6s ease;
+      position: absolute;
+      width: 100%;
+      height: 100%;
     }
 
-    .balance {
+    .view.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .wallet-view h3 {
+      color: #4cff9a;
       text-align: center;
-      color: #fff;
-      margin-bottom: 10px;
     }
 
-    .balance h3 {
-      font-size: 2rem;
-      margin: 0;
-    }
-
-    .balance p {
-      color: #43d17b;
-      margin: 0;
-      font-size: 0.9rem;
-    }
-
-    .actions {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .actions button {
-      background-color: #1a73e8;
+    .wallet-view .actions button {
+      background: #4a90e2;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       padding: 10px 20px;
       color: white;
-      font-size: 0.9rem;
+      margin: 5px;
       cursor: pointer;
+      box-shadow: var(--glow);
+      transition: transform 0.3s;
     }
 
-    .actions button.swap {
-      background-color: #7b61ff;
+    .wallet-view .actions button:hover {
+      transform: scale(1.1);
     }
 
-    .assets, .transactions {
-      background-color: #1a1a1a;
-      margin: 0 15px 15px 15px;
-      border-radius: 10px;
-      padding: 10px;
-      color: white;
-    }
-
-    .assets h4, .transactions h4 {
-      margin: 0 0 8px;
-      font-size: 0.9rem;
-      color: #bbb;
-    }
-
-    .asset-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 6px 0;
-    }
-
-    .asset-item span:first-child {
-      font-weight: 600;
-    }
-
-    .transactions p {
-      font-size: 0.9rem;
-      display: flex;
-      justify-content: space-between;
-      color: #ffaf40;
-    }
-
-    /* Bottom Nav */
     .bottom-nav {
       display: flex;
       justify-content: space-around;
-      background-color: #111;
+      background: var(--nav-bg);
       padding: 12px 0;
       border-top: 1px solid #222;
+      transition: background 0.5s;
     }
 
     .bottom-nav button {
       background: none;
       border: none;
       color: #aaa;
-      font-size: 0.9rem;
       cursor: pointer;
+      font-size: 0.9rem;
     }
 
     .bottom-nav button.active {
       color: #fff;
+      text-shadow: var(--glow);
     }
 
     footer {
       text-align: center;
       padding: 20px;
-      background: #f1f1f1;
+      background: var(--footer-bg);
+      color: var(--footer-text);
+      transition: background 0.5s, color 0.5s;
       font-size: 0.9rem;
-      color: #555;
     }
 
     footer a {
-      color: #1a73e8;
+      color: var(--link-color);
       text-decoration: none;
+    }
+
+    /* Floating Theme Toggle */
+    .theme-toggle {
+      position: fixed;
+      right: 25px;
+      bottom: 25px;
+      background: var(--link-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      box-shadow: var(--glow);
+      transition: transform 0.3s, box-shadow 0.4s;
+    }
+
+    .theme-toggle:hover {
+      transform: rotate(20deg) scale(1.1);
+      box-shadow: 0 0 25px rgba(74, 144, 226, 0.9);
     }
   </style>
 </head>
-<body>
+
+<body class="dark">
   <header>
     <h1>Digit</h1>
     <a href="#how-it-works">How it Works</a>
@@ -244,37 +278,33 @@
   <main>
     <div class="text-section">
       <h2>Self-custody crypto wallet</h2>
-      <p>Manage your crypto assets and tokens, spend crypto like cash, swap, exchange, and trade crypto, and connect to Web3 and dApps.</p>
-      <button id="getStarted">Get started</button>
+      <p>Manage your assets, swap, trade, and spend crypto like cash. Connect to Web3 and dApps — all from one powerful platform.</p>
+      <button id="getStarted">Get Started</button>
     </div>
 
     <div class="iphone-frame">
       <div class="iphone-notch"></div>
-      <div class="screen" id="screen">
-        <div class="wallet-header">Digit</div>
-        <div class="balance">
+      <div class="screen">
+        <div class="view wallet-view active" id="wallet">
           <h3>$12,345.67</h3>
-          <p>+3.45%</p>
-        </div>
-        <div class="actions">
-          <button>Spend</button>
-          <button class="swap">Swap</button>
-        </div>
-        <div class="assets">
-          <h4>My Assets</h4>
-          <div class="asset-item">
-            <span>Bitcoin</span>
-            <span>0.25 BTC</span>
-          </div>
-          <div class="asset-item">
-            <span>Ethereum</span>
-            <span>2.35 ETH</span>
+          <div class="actions">
+            <button>Spend</button>
+            <button>Swap</button>
           </div>
         </div>
-        <div class="transactions">
-          <h4>Recent Transactions</h4>
-          <p><span>Sent to John</span><span>$100.00</span></p>
+        <div class="view" id="settings">
+          <h3>Settings</h3>
+          <button id="toggleTheme">Toggle Dark Mode</button>
         </div>
+        <div class="view" id="messages">
+          <h3>Messages</h3>
+          <p>No new notifications.</p>
+        </div>
+        <div class="view" id="profile">
+          <h3>Profile</h3>
+          <p>@digituser</p>
+        </div>
+
         <div class="bottom-nav">
           <button class="active" data-view="wallet">Wallet</button>
           <button data-view="settings">Settings</button>
@@ -289,43 +319,39 @@
     © 2025 Digit. Powered by <a href="https://wordpress.org" target="_blank">WordPress</a>.
   </footer>
 
+  <button class="theme-toggle" id="globalToggle">🪄</button>
+
   <script>
     const navButtons = document.querySelectorAll('.bottom-nav button');
-    const screen = document.getElementById('screen');
+    const views = document.querySelectorAll('.view');
+    let activeView = document.querySelector('.view.active');
+    const body = document.body;
+    const toggleThemeBtn = document.getElementById('toggleTheme');
+    const globalToggle = document.getElementById('globalToggle');
 
     navButtons.forEach(btn => {
       btn.addEventListener('click', () => {
+        const target = document.getElementById(btn.dataset.view);
+        if (target === activeView) return;
         navButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        const view = btn.dataset.view;
-        updateScreen(view);
+        activeView.classList.remove('active');
+        target.classList.add('active');
+        activeView = target;
       });
     });
 
-    function updateScreen(view) {
-      if (view === 'wallet') {
-        screen.querySelector('.wallet-header').textContent = "Digit";
-      } else {
-        screen.querySelector('.wallet-header').textContent = view.charAt(0).toUpperCase() + view.slice(1);
-      }
-
-      const actions = screen.querySelector('.actions');
-      const assets = screen.querySelector('.assets');
-      const transactions = screen.querySelector('.transactions');
-
-      if (view === 'wallet') {
-        actions.style.display = 'flex';
-        assets.style.display = 'block';
-        transactions.style.display = 'block';
-      } else {
-        actions.style.display = 'none';
-        assets.style.display = 'none';
-        transactions.style.display = 'none';
-      }
+    function toggleTheme() {
+      body.classList.toggle('dark');
+      body.classList.toggle('light');
+      globalToggle.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
     }
 
+    toggleThemeBtn.addEventListener('click', toggleTheme);
+    globalToggle.addEventListener('click', toggleTheme);
+
     document.getElementById('getStarted').addEventListener('click', () => {
-      alert('Welcome to Digit Wallet! Explore its features directly from this landing page.');
+      alert("Welcome to Digit Wallet — Explore all features directly from this landing page!");
     });
   </script>
 </body>
