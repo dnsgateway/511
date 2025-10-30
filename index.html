@@ -5,50 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Digit - Self-Custody Crypto Wallet</title>
   <style>
-    :root {
-      --bg-color: #fafafa;
-      --text-color: #0b0b0b;
-      --card-bg: #fff;
-      --link-color: #1a73e8;
-      --screen-bg: #0b0b0b;
-      --nav-bg: #111;
-      --footer-bg: #f1f1f1;
-      --footer-text: #555;
-    }
-
-    body.dark {
-      --bg-color: #0b0b0b;
-      --text-color: #f5f5f5;
-      --card-bg: #121212;
-      --link-color: #00ffff;
-      --screen-bg: #1a1a1a;
-      --nav-bg: #000;
-      --footer-bg: #111;
-      --footer-text: #aaa;
-    }
-
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      background: var(--bg-color);
-      color: var(--text-color);
+      background-color: #fafafa;
+      color: #0b0b0b;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      transition: background 0.5s, color 0.5s;
-      overflow-x: hidden;
-    }
-
-    body.dark {
-      background: radial-gradient(circle at 20% 20%, #111 0%, #000 60%) fixed;
-      animation: neonPulse 10s infinite alternate;
-      background-size: 200% 200%;
-    }
-
-    @keyframes neonPulse {
-      0% { box-shadow: inset 0 0 50px #0ff; }
-      50% { box-shadow: inset 0 0 80px #0ff3, inset 0 0 100px #1a73e8; }
-      100% { box-shadow: inset 0 0 60px #4a90e2; }
     }
 
     header {
@@ -57,26 +21,24 @@
       justify-content: space-between;
       align-items: center;
       padding: 20px 50px;
-      background-color: var(--card-bg);
+      background-color: #fff;
       box-shadow: 0 1px 6px rgba(0,0,0,0.05);
       position: sticky;
       top: 0;
       z-index: 100;
-      transition: background 0.4s;
     }
 
     header h1 {
       font-size: 1.5rem;
       font-weight: 700;
-      color: var(--text-color);
+      color: #0b0b0b;
     }
 
     header a {
       text-decoration: none;
-      color: var(--link-color);
+      color: #1a73e8;
       font-weight: 500;
       font-size: 1rem;
-      transition: color 0.3s;
     }
 
     main {
@@ -86,43 +48,38 @@
       flex: 1;
       padding: 50px;
       gap: 60px;
-      transition: color 0.4s;
     }
 
     .text-section {
-      max-width: 420px;
-      position: relative;
-      z-index: 2;
+      max-width: 400px;
     }
 
     .text-section h2 {
-      font-size: 2.7rem;
+      font-size: 2.5rem;
       font-weight: 700;
       margin-bottom: 10px;
-      line-height: 1.2;
     }
 
     .text-section p {
       font-size: 1.1rem;
       line-height: 1.6;
+      color: #333;
       margin-bottom: 25px;
     }
 
     .text-section button {
-      background-color: var(--link-color);
+      background-color: #1a73e8;
       color: #fff;
       border: none;
       border-radius: 8px;
       padding: 14px 28px;
       font-size: 1rem;
       cursor: pointer;
-      box-shadow: 0 0 15px rgba(26, 115, 232, 0.5);
-      transition: all 0.4s;
+      transition: background 0.3s;
     }
 
     .text-section button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 25px rgba(26, 115, 232, 0.8);
+      background-color: #0c5ac3;
     }
 
     /* iPhone Mockup */
@@ -132,13 +89,12 @@
       height: 640px;
       border: 12px solid #000;
       border-radius: 40px;
-      box-shadow: 0 0 40px rgba(0, 255, 255, 0.4);
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
       background-color: #000;
       display: flex;
       justify-content: center;
       align-items: center;
       overflow: hidden;
-      transition: all 0.6s ease;
     }
 
     .iphone-notch {
@@ -157,15 +113,15 @@
     .screen {
       width: 94%;
       height: 94%;
-      background: var(--screen-bg);
+      background: #0b0b0b;
       border-radius: 28px;
       overflow: hidden;
       position: relative;
       display: flex;
       flex-direction: column;
-      transition: background 0.4s;
     }
 
+    /* Sliding transition area */
     .screen-content {
       flex: 1;
       position: relative;
@@ -183,7 +139,7 @@
       color: white;
       opacity: 0;
       transform: translateX(100%);
-      transition: transform 0.6s ease, opacity 0.6s ease;
+      transition: transform 0.5s ease, opacity 0.5s ease;
     }
 
     .view.active {
@@ -192,6 +148,12 @@
       z-index: 2;
     }
 
+    .view.exit-left {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+
+    /* Wallet View Styles */
     .wallet-view .balance {
       text-align: center;
       color: #fff;
@@ -201,7 +163,6 @@
     .wallet-view .balance h3 {
       font-size: 2rem;
       margin: 0;
-      text-shadow: 0 0 10px #4a90e2;
     }
 
     .wallet-view .balance p {
@@ -225,17 +186,10 @@
       color: white;
       font-size: 0.9rem;
       cursor: pointer;
-      box-shadow: 0 0 10px rgba(26, 115, 232, 0.5);
-      transition: all 0.3s;
     }
 
     .wallet-view .actions button.swap {
       background-color: #7b61ff;
-      box-shadow: 0 0 10px rgba(123, 97, 255, 0.6);
-    }
-
-    .wallet-view .actions button:hover {
-      transform: scale(1.05);
     }
 
     .wallet-view .assets, .wallet-view .transactions {
@@ -244,7 +198,6 @@
       border-radius: 10px;
       padding: 10px;
       color: white;
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
     }
 
     .wallet-view h4 {
@@ -266,13 +219,13 @@
       color: #ffaf40;
     }
 
+    /* Bottom Nav */
     .bottom-nav {
       display: flex;
       justify-content: space-around;
-      background-color: var(--nav-bg);
+      background-color: #111;
       padding: 12px 0;
       border-top: 1px solid #222;
-      transition: background 0.4s;
     }
 
     .bottom-nav button {
@@ -281,109 +234,24 @@
       color: #aaa;
       font-size: 0.9rem;
       cursor: pointer;
-      transition: color 0.3s, text-shadow 0.3s;
+      transition: color 0.3s;
     }
 
     .bottom-nav button.active {
-      color: #00ffff;
-      text-shadow: 0 0 10px #00ffff;
+      color: #fff;
     }
 
     footer {
       text-align: center;
       padding: 20px;
-      background: var(--footer-bg);
+      background: #f1f1f1;
       font-size: 0.9rem;
-      color: var(--footer-text);
-      transition: background 0.4s, color 0.4s;
+      color: #555;
     }
 
     footer a {
-      color: var(--link-color);
+      color: #1a73e8;
       text-decoration: none;
-    }
-
-    .theme-toggle {
-      position: fixed;
-      right: 30px;
-      bottom: 30px;
-      background: var(--link-color);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      cursor: pointer;
-      font-size: 1.2rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      transition: background 0.4s, transform 0.3s;
-    }
-
-    .theme-toggle:hover {
-      transform: rotate(15deg) scale(1.1);
-    }
-
-    /* Connect Wallet Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
-
-    .modal.active {
-      display: flex;
-      animation: fadeIn 0.4s ease;
-    }
-
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
-
-    .modal-content {
-      background: #111;
-      border-radius: 16px;
-      padding: 30px;
-      color: #fff;
-      box-shadow: 0 0 25px rgba(0,255,255,0.3);
-      text-align: center;
-      width: 300px;
-      position: relative;
-    }
-
-    .modal-content h3 {
-      margin-bottom: 20px;
-      text-shadow: 0 0 10px #00ffff;
-    }
-
-    .wallet-option {
-      background: #1a1a1a;
-      padding: 12px;
-      margin-bottom: 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-    }
-
-    .wallet-option:hover {
-      background: #00ffff22;
-      transform: scale(1.05);
-    }
-
-    .close-modal {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      color: #aaa;
-      font-size: 1.3rem;
-      cursor: pointer;
     }
   </style>
 </head>
@@ -395,8 +263,8 @@
 
   <main>
     <div class="text-section">
-      <h2>Self-Custody Crypto Wallet</h2>
-      <p>Manage, swap, trade, and spend your crypto like cash — all in one place. Connect to Web3 and explore DApps securely with Digit.</p>
+      <h2>Self-custody crypto wallet</h2>
+      <p>Manage your crypto assets, spend crypto like cash, swap, exchange, and trade. Connect to Web3 and explore dApps — all from one app.</p>
       <button id="getStarted">Get Started</button>
     </div>
 
@@ -404,6 +272,7 @@
       <div class="iphone-notch"></div>
       <div class="screen">
         <div class="screen-content">
+          <!-- Wallet View -->
           <div class="view wallet-view active" id="wallet">
             <div class="balance">
               <h3>$12,345.67</h3>
@@ -424,19 +293,20 @@
             </div>
           </div>
 
+          <!-- Settings View -->
           <div class="view" id="settings">
             <h3>Settings</h3>
-            <p>Switch themes, manage notifications, and secure your wallet.</p>
-            <button id="toggleTheme" style="background:#1a73e8;border:none;padding:10px 20px;border-radius:8px;color:white;">
-              Toggle Dark Mode
-            </button>
+            <p>Dark mode, notifications, and wallet backup options.</p>
+            <button style="background:#1a73e8; border:none; padding:10px 20px; border-radius:8px; color:white;">Toggle Dark Mode</button>
           </div>
 
+          <!-- Messages View -->
           <div class="view" id="messages">
             <h3>Messages</h3>
-            <p>No new messages. Stay tuned for updates.</p>
+            <p>No new messages. Stay tuned for important wallet updates.</p>
           </div>
 
+          <!-- Profile View -->
           <div class="view" id="profile">
             <h3>Profile</h3>
             <p>User: @digituser</p>
@@ -458,30 +328,10 @@
     © 2025 Digit. Powered by <a href="https://wordpress.org" target="_blank">WordPress</a>.
   </footer>
 
-  <button class="theme-toggle" id="globalToggle">🌓</button>
-
-  <!-- Connect Wallet Modal -->
-  <div class="modal" id="walletModal">
-    <div class="modal-content">
-      <span class="close-modal" id="closeModal">&times;</span>
-      <h3>Connect Your Wallet</h3>
-      <div class="wallet-option" data-wallet="MetaMask">🦊 MetaMask</div>
-      <div class="wallet-option" data-wallet="WalletConnect">🔗 WalletConnect</div>
-      <p id="walletStatus"></p>
-    </div>
-  </div>
-
   <script>
     const navButtons = document.querySelectorAll('.bottom-nav button');
     const views = document.querySelectorAll('.view');
     let activeView = document.querySelector('.view.active');
-    const body = document.body;
-    const toggleThemeBtn = document.getElementById('toggleTheme');
-    const globalToggle = document.getElementById('globalToggle');
-    const modal = document.getElementById('walletModal');
-    const closeModal = document.getElementById('closeModal');
-    const walletOptions = document.querySelectorAll('.wallet-option');
-    const walletStatus = document.getElementById('walletStatus');
 
     navButtons.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -499,36 +349,12 @@
         setTimeout(() => {
           activeView.classList.remove('exit-left');
           activeView = target;
-        }, 600);
+        }, 500);
       });
     });
-
-    function toggleTheme() {
-      body.classList.toggle('dark');
-      globalToggle.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
-    }
-
-    if (toggleThemeBtn) toggleThemeBtn.addEventListener('click', toggleTheme);
-    if (globalToggle) globalToggle.addEventListener('click', toggleTheme);
 
     document.getElementById('getStarted').addEventListener('click', () => {
-      modal.classList.add('active');
-    });
-
-    closeModal.addEventListener('click', () => {
-      modal.classList.remove('active');
-      walletStatus.textContent = '';
-    });
-
-    walletOptions.forEach(opt => {
-      opt.addEventListener('click', () => {
-        const wallet = opt.dataset.wallet;
-        walletStatus.textContent = `🔒 Connecting to ${wallet}...`;
-        walletStatus.style.color = '#00ffff';
-        setTimeout(() => {
-          walletStatus.textContent = `✅ ${wallet} connected successfully!`;
-        }, 1500);
-      });
+      alert("Welcome to Digit Wallet! You can test all features live from this landing page.");
     });
   </script>
 </body>
