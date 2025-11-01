@@ -3,464 +3,318 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Digit - Self-Custody Crypto Wallet</title>
+<title>Digit – Modern Crypto Wallet</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-  :root {
-    --bg-color: #f5f5f5;
-    --text-color: #0b0b0b;
-    --link-color: #007aff;
-    --screen-bg: #0d0d0d;
-    --nav-bg: #111;
-    --divider: #1c1c1c;
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:#fff;
+    color:#111;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    min-height:100vh;
+    padding:30px 60px;
   }
 
-  body.dark {
-    --bg-color: #0b0b0b;
-    --text-color: #f5f5f5;
-    --link-color: #00ffff;
-    --screen-bg: #1a1a1a;
-    --nav-bg: #000;
-    --divider: #333;
+  header{
+    width:100%;
+    max-width:1200px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:60px;
   }
+  .logo{font-size:28px;font-weight:700;}
+  nav a{color:#2f6df6;text-decoration:none;font-weight:600;}
 
-  body {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-    background: var(--bg-color);
-    color: var(--text-color);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-    transition: background 0.5s, color 0.5s;
+  .container{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    width:100%;
+    max-width:1200px;
+    flex-wrap:wrap;
   }
-
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 50px;
-    background: white;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+  .left{flex:1;min-width:300px;padding-right:40px;}
+  .left h1{font-size:42px;font-weight:800;margin-bottom:20px;}
+  .left p{font-size:18px;color:#333;margin-bottom:30px;}
+  .cta{
+    background:#2f6df6;color:white;padding:14px 24px;font-size:17px;
+    border-radius:10px;cursor:pointer;border:none;transition:0.3s;
   }
+  .cta:hover{background:#1e56d6;}
 
-  body.dark header {
-    background: #111;
+  .right{flex:1;display:flex;align-items:center;justify-content:center;min-width:340px;}
+  .iphone{
+    position:relative;width:330px;height:670px;background:#111;
+    border-radius:45px;padding:14px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.4);
+    display:flex;justify-content:center;align-items:center;
   }
-
-  header h1 {
-    color: var(--link-color);
-    font-weight: 700;
-    font-size: 1.6rem;
+  .iphone::before{
+    content:'';position:absolute;top:10px;left:50%;
+    transform:translateX(-50%);width:150px;height:25px;background:#000;
+    border-radius:12px;z-index:3;
   }
-
-  header a {
-    text-decoration: none;
-    color: var(--text-color);
-    font-weight: 500;
+  .status-bar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:6px 14px 0;font-size:12px;color:#000;
   }
-
-  main {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    padding: 60px;
-    gap: 100px;
+  .screen{
+    position:relative;width:100%;height:100%;background:#fefefe;
+    border-radius:32px;overflow:hidden;
+    display:flex;flex-direction:column;justify-content:space-between;
   }
-
-  .text-section {
-    max-width: 420px;
+  .app-header{
+    padding:10px 16px;font-weight:700;font-size:18px;
+    text-align:center;border-bottom:1px solid #eee;
   }
-
-  .text-section h2 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 15px;
+  .app-content{flex:1;overflow-y:auto;}
+  .section{margin:16px;}
+  .section h3{font-size:16px;font-weight:700;margin-bottom:10px;}
+  .bottom-nav{
+    border-top:1px solid #eee;
+    display:flex;justify-content:space-around;align-items:center;
+    padding:10px 0;background:#fff;
   }
-
-  .text-section p {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    margin-bottom: 25px;
+  .nav-item{
+    display:flex;flex-direction:column;align-items:center;
+    font-size:12px;color:#777;cursor:pointer;
   }
+  .nav-item i{font-size:16px;margin-bottom:2px;}
+  .nav-item.active{color:#2f6df6;font-weight:700;}
 
-  .text-section button {
-    background: var(--link-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 14px 28px;
-    font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 0 0 15px rgba(0,122,255,0.4);
-    transition: all 0.3s;
+  /* Wallet Specific */
+  .balance-card{
+    background:#f9fafb;margin:16px;padding:16px;border-radius:14px;
   }
-
-  .text-section button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 25px rgba(0,122,255,0.7);
+  .balance-label{color:#666;font-size:14px;}
+  .balance-value{font-size:26px;font-weight:700;margin-top:6px;}
+  .balance-change{color:#25a96a;font-weight:600;font-size:13px;margin-top:4px;}
+  .chart-container{width:100%;height:100px;margin-top:10px;}
+  .actions-section{margin:16px;}
+  .actions-title{font-weight:700;font-size:16px;margin-bottom:10px;}
+  .actions{display:flex;justify-content:space-between;gap:10px;}
+  .action-btn{
+    flex:1;background:#2f6df6;color:white;padding:12px;border-radius:10px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-size:13px;cursor:pointer;transition:transform .2s;
   }
-
-  /* iPhone 12 Mockup */
-  .iphone-frame {
-    position: relative;
-    width: 340px;
-    height: 700px;
-    background: #000;
-    border-radius: 48px;
-    box-shadow: 0 0 60px rgba(0, 255, 255, 0.3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+  .action-btn:hover{transform:translateY(-2px);background:#1e56d6;}
+  .action-btn i{font-size:18px;margin-bottom:6px;}
+  .mover,.asset,.activity,.offer-card{
+    background:#fff;border-radius:10px;padding:10px 14px;
+    box-shadow:0 2px 4px rgba(0,0,0,0.05);
   }
-
-  .iphone-notch {
-    position: absolute;
-    top: 0;
-    width: 160px;
-    height: 32px;
-    background: #000;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
+  .mover+.mover,.asset+.asset,.activity+.activity,.offer-card+.offer-card{margin-top:8px;}
+  .mover{display:flex;justify-content:space-between;}
+  .mover-change{font-weight:700;color:#25a96a;}
+  .mover.negative .mover-change{color:#e04b4b;}
+  .asset{display:flex;justify-content:space-between;align-items:center;}
+  .asset-left{display:flex;align-items:center;gap:10px;}
+  .asset-icon{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;}
+  .asset-name{font-weight:600;}
+  .asset-value{font-weight:700;}
+  .activity{display:flex;justify-content:space-between;}
+  .activity-amount{color:#2f6df6;font-weight:700;}
+  .offer-card{display:flex;justify-content:space-between;align-items:center;}
+  .offer-left{display:flex;align-items:center;gap:10px;}
+  .offer-btn{background:#2f6df6;color:#fff;border:none;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;}
+  .offer-btn:hover{background:#1e56d6;}
+  .more-options{display:flex;flex-direction:column;gap:8px;}
+  .more-item{background:#fff;padding:12px 14px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
+  .more-item:hover{background:#f3f6ff;}
+  .overlay{
+    display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+    background:rgba(0,0,0,0.4);align-items:center;justify-content:center;z-index:50;
   }
-
-  .iphone-buttons::before,
-  .iphone-buttons::after {
-    content: "";
-    position: absolute;
-    background: #111;
-    border-radius: 3px;
+  .modal{
+    background:white;padding:24px;border-radius:12px;width:360px;max-width:90%;
+    box-shadow:0 10px 40px rgba(0,0,0,0.3);
   }
-
-  .iphone-buttons::before {
-    width: 3px; height: 40px; left: 0; top: 120px;
+  .modal button{
+    margin-top:20px;background:#2f6df6;color:white;border:none;padding:10px 20px;
+    border-radius:8px;cursor:pointer;
   }
-
-  .iphone-buttons::after {
-    width: 3px; height: 60px; right: 0; top: 200px;
-  }
-
-  .screen {
-    width: 94%;
-    height: 94%;
-    background: var(--screen-bg);
-    border-radius: 40px;
-    overflow: hidden;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .menu-toggle {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    color: var(--link-color);
-    font-size: 1.4rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    z-index: 11;
-    transition: transform 0.3s;
-  }
-
-  .menu-toggle:hover {
-    transform: rotate(90deg);
-  }
-
-  .side-menu {
-    position: absolute;
-    top: 0;
-    left: -220px;
-    width: 200px;
-    height: 100%;
-    background: rgba(20,20,20,0.95);
-    padding: 40px 20px;
-    transition: left 0.4s ease;
-    z-index: 10;
-  }
-
-  .side-menu.active {
-    left: 0;
-  }
-
-  .side-menu h3 {
-    color: var(--link-color);
-    margin-bottom: 20px;
-  }
-
-  .side-menu button {
-    display: block;
-    width: 100%;
-    background: none;
-    border: none;
-    color: #ccc;
-    text-align: left;
-    padding: 10px 0;
-    cursor: pointer;
-    transition: color 0.3s;
-  }
-
-  .side-menu button:hover {
-    color: var(--link-color);
-  }
-
-  .screen-content {
-    flex: 1;
-    position: relative;
-  }
-
-  .divider {
-    height: 1px;
-    background: var(--divider);
-    width: 100%;
-  }
-
-  .view {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    padding: 20px;
-    box-sizing: border-box;
-    color: white;
-    opacity: 0;
-    transform: translateX(100%);
-    transition: transform 0.6s ease, opacity 0.6s ease;
-  }
-
-  .view.active {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
-  .wallet-view .balance {
-    text-align: center;
-    margin-bottom: 10px;
-  }
-
-  .wallet-view .balance h3 {
-    font-size: 2rem;
-    color: #4cff9a;
-  }
-
-  .wallet-view .balance p {
-    font-size: 0.9rem;
-    color: #43d17b;
-  }
-
-  .wallet-view .actions {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .wallet-view .actions button {
-    background: var(--link-color);
-    border: none;
-    border-radius: 10px;
-    padding: 10px 18px;
-    color: white;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .wallet-view .actions button:hover {
-    transform: scale(1.05);
-  }
-
-  .assets, .transactions {
-    background: #1a1a1a;
-    margin-bottom: 12px;
-    border-radius: 10px;
-    padding: 12px;
-  }
-
-  .assets h4, .transactions h4 {
-    margin: 0 0 6px;
-    font-size: 0.9rem;
-    color: #aaa;
-  }
-
-  .asset-item {
-    display: flex;
-    justify-content: space-between;
-    margin: 6px 0;
-  }
-
-  .bottom-nav {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    background: var(--nav-bg);
-    padding: 12px 0;
-    border-top: 1px solid var(--divider);
-  }
-
-  .bottom-nav button {
-    background: none;
-    border: none;
-    color: #888;
-    font-size: 1.4rem;
-    cursor: pointer;
-    transition: color 0.3s, transform 0.3s;
-  }
-
-  .bottom-nav button.active {
-    color: var(--link-color);
-    transform: scale(1.2);
-  }
-
-  footer {
-    text-align: center;
-    padding: 20px;
-    background: #f1f1f1;
-    font-size: 0.9rem;
-  }
-
-  body.dark footer {
-    background: #111;
-    color: #aaa;
-  }
-
 </style>
 </head>
 <body>
+
 <header>
-  <h1>Digit</h1>
-  <a href="#how-it-works">How it Works</a>
+  <div class="logo">Digit</div>
+  <nav><a href="#">How Digit Works</a></nav>
 </header>
 
-<main>
-  <div class="text-section">
-    <h2>Self-Custody Crypto Wallet</h2>
-    <p>Manage, send, swap, and spend your crypto with the freedom of true self-custody. Connect to Web3 and explore DApps securely with Digit.</p>
-    <button id="getStarted">Get Started</button>
+<div class="container">
+  <div class="left">
+    <h1>A modern, interactive self-custody crypto wallet</h1>
+    <p>Manage crypto assets, earn rewards, and redeem offers — all in one secure app prototype.</p>
+    <button class="cta" id="getStarted">Get started</button>
   </div>
 
-  <div class="iphone-frame">
-    <div class="iphone-notch"></div>
-    <div class="iphone-buttons"></div>
-    <div class="screen">
-      <button class="menu-toggle"><i class="fas fa-bars"></i></button>
-      <div class="side-menu" id="menuDrawer">
-        <h3>Menu</h3>
-        <button>📊 Analytics</button>
-        <button>💳 Linked Cards</button>
-        <button>🧠 AI Insights</button>
-        <button>⚙️ Developer Mode</button>
-      </div>
+  <div class="right">
+    <div class="iphone">
+      <div class="screen">
+        <div class="status-bar">
+          <div>9:41</div>
+          <div>📶 🔋</div>
+        </div>
 
-      <div class="screen-content">
-        <div class="view wallet-view active" id="wallet">
-          <div class="balance">
-            <h3>$12,345.67</h3>
-            <p>+3.45% today</p>
+        <!-- WALLET INTERFACE -->
+        <div class="app-content" id="walletScreen">
+          <div class="app-header">Wallet</div>
+          <div class="balance-card">
+            <div class="balance-label">Total balance</div>
+            <div class="balance-value">$26,524.00</div>
+            <div class="balance-change">+4.24%</div>
+            <div class="chart-container"><canvas id="balanceChart"></canvas></div>
           </div>
-
-          <div class="actions">
-            <button><i class="fas fa-credit-card"></i> Spend</button>
-            <button><i class="fas fa-arrows-rotate"></i> Swap</button>
-            <button><i class="fas fa-paper-plane"></i> Send</button>
-            <button><i class="fas fa-exchange-alt"></i> Exchange</button>
+          <div class="actions-section">
+            <div class="actions-title">Quick Actions</div>
+            <div class="actions">
+              <div class="action-btn" data-action="Send"><i class="fa-solid fa-arrow-up"></i>Send</div>
+              <div class="action-btn" data-action="Spend"><i class="fa-solid fa-credit-card"></i>Spend</div>
+              <div class="action-btn" data-action="Swap"><i class="fa-solid fa-retweet"></i>Swap</div>
+              <div class="action-btn" data-action="Exchange"><i class="fa-solid fa-right-left"></i>Exchange</div>
+            </div>
           </div>
-
-          <div class="assets">
-            <h4>My Assets</h4>
-            <div class="asset-item"><span>Bitcoin</span><span>0.25 BTC</span></div>
-            <div class="asset-item"><span>Ethereum</span><span>2.35 ETH</span></div>
+          <div class="section">
+            <h3>Top Movers</h3>
+            <div class="mover"><div>Bitcoin (BTC)</div><div class="mover-change">+3.5%</div></div>
+            <div class="mover"><div>Ethereum (ETH)</div><div class="mover-change">+2.1%</div></div>
+            <div class="mover negative"><div>Cardano (ADA)</div><div class="mover-change">-1.4%</div></div>
+            <div class="mover"><div>Solana (SOL)</div><div class="mover-change">+4.8%</div></div>
           </div>
-
-          <div class="transactions">
-            <h4>Recent Transactions</h4>
-            <div class="asset-item"><span>Sent to John</span><span>$100</span></div>
+          <div class="section">
+            <h3>My Assets</h3>
+            <div class="asset">
+              <div class="asset-left"><div class="asset-icon" style="background:#f7931a;">₿</div><div class="asset-name">Bitcoin</div></div>
+              <div class="asset-value">$14,689.30</div>
+            </div>
+            <div class="asset">
+              <div class="asset-left"><div class="asset-icon" style="background:#627eea;">Ξ</div><div class="asset-name">Ethereum</div></div>
+              <div class="asset-value">$11,884.70</div>
+            </div>
+          </div>
+          <div class="section">
+            <h3>Recent Activity</h3>
+            <div class="activity"><div>Sent to 0xA1...C4</div><div class="activity-amount">-0.05 BTC</div></div>
+            <div class="activity"><div>Received from 0xB2...E7</div><div class="activity-amount">+0.1 ETH</div></div>
           </div>
         </div>
 
-        <div class="view" id="settings">
-          <h3>Settings</h3>
-          <p>Manage security, preferences, and connected devices.</p>
-          <button id="toggleTheme">Toggle Dark Mode</button>
+        <!-- ACTIVITIES INTERFACE -->
+        <div class="app-content" id="activitiesScreen" style="display:none;">
+          <div class="app-header">Activities</div>
+          <div class="section">
+            <h3>Transaction History</h3>
+            <div class="activity"><div>Swap ETH → USDT</div><div class="activity-amount">+$350</div></div>
+            <div class="activity"><div>Send to Binance Wallet</div><div class="activity-amount">-0.02 BTC</div></div>
+            <div class="activity"><div>Received from Coinbase</div><div class="activity-amount">+0.3 ETH</div></div>
+          </div>
+          <div class="section">
+            <h3>Insights</h3>
+            <p style="font-size:14px;color:#444;line-height:1.4;">
+              Your most traded asset this week is <strong>Ethereum</strong>.  
+              You’ve made 6 total transactions in the past 7 days, with a net gain of +3.2%.
+            </p>
+          </div>
         </div>
 
-        <div class="view" id="messages">
-          <h3>Messages</h3>
-          <p>No new notifications.</p>
+        <!-- OFFERS INTERFACE -->
+        <div class="app-content" id="offersScreen" style="display:none;">
+          <div class="app-header">Offers</div>
+          <div class="section">
+            <h3>Gift Cards Available</h3>
+            <div class="offer-card">
+              <div class="offer-left"><i class="fa-brands fa-apple"></i> Apple Gift Card</div>
+              <button class="offer-btn">Buy – 200₵</button>
+            </div>
+            <div class="offer-card">
+              <div class="offer-left"><i class="fa-brands fa-amazon"></i> Amazon Gift Card</div>
+              <button class="offer-btn">Buy – 150₵</button>
+            </div>
+            <div class="offer-card">
+              <div class="offer-left"><i class="fa-brands fa-spotify"></i> Spotify Premium</div>
+              <button class="offer-btn">Buy – 100₵</button>
+            </div>
+            <div class="offer-card">
+              <div class="offer-left"><i class="fa-brands fa-steam"></i> Steam Wallet</div>
+              <button class="offer-btn">Buy – 250₵</button>
+            </div>
+          </div>
         </div>
 
-        <div class="view" id="profile">
-          <h3>Profile</h3>
-          <p>@digituser</p>
-          <p>Email: user@digitwallet.com</p>
+        <!-- MORE INTERFACE -->
+        <div class="app-content" id="moreScreen" style="display:none;">
+          <div class="app-header">More</div>
+          <div class="section">
+            <div class="more-options">
+              <div class="more-item">Profile <i class="fa-solid fa-user"></i></div>
+              <div class="more-item">Settings <i class="fa-solid fa-gear"></i></div>
+              <div class="more-item">Support <i class="fa-solid fa-headset"></i></div>
+              <div class="more-item">About Digit <i class="fa-solid fa-circle-info"></i></div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="divider"></div>
-
-      <div class="bottom-nav">
-        <button class="active" data-view="wallet"><i class="fas fa-wallet"></i></button>
-        <button data-view="settings"><i class="fas fa-cog"></i></button>
-        <button data-view="messages"><i class="fas fa-comment-dots"></i></button>
-        <button data-view="profile"><i class="fas fa-user"></i></button>
+        <!-- NAVIGATION -->
+        <div class="bottom-nav">
+          <div class="nav-item active" data-screen="walletScreen"><i class="fa-solid fa-wallet"></i><div>Wallet</div></div>
+          <div class="nav-item" data-screen="activitiesScreen"><i class="fa-solid fa-list"></i><div>Activities</div></div>
+          <div class="nav-item" data-screen="offersScreen"><i class="fa-solid fa-gift"></i><div>Offers</div></div>
+          <div class="nav-item" data-screen="moreScreen"><i class="fa-solid fa-ellipsis"></i><div>More</div></div>
+        </div>
       </div>
     </div>
   </div>
-</main>
+</div>
 
-<footer>
-  © 2025 Digit. Powered by <a href="https://wordpress.org" target="_blank">WordPress</a>.
-</footer>
+<div class="overlay" id="overlay">
+  <div class="modal" id="modalBox"></div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const navButtons = document.querySelectorAll('.bottom-nav button');
-const views = document.querySelectorAll('.view');
-let activeView = document.querySelector('.view.active');
-const body = document.body;
-const toggleThemeBtn = document.getElementById('toggleTheme');
-const menuToggle = document.querySelector('.menu-toggle');
-const menuDrawer = document.getElementById('menuDrawer');
-
-navButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const target = document.getElementById(btn.dataset.view);
-    if (target === activeView) return;
-    navButtons.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    activeView.classList.remove('active');
-    target.classList.add('active');
-    activeView = target;
+  // Balance chart
+  const ctx=document.getElementById('balanceChart').getContext('2d');
+  new Chart(ctx,{
+    type:'line',
+    data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      datasets:[{data:[24500,24800,24900,25100,26000,26200,26524],
+      borderColor:'#2f6df6',backgroundColor:'rgba(47,109,246,0.1)',fill:true,tension:0.3,pointRadius:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{display:false},y:{display:false}}}
   });
-});
 
-menuToggle.addEventListener('click', () => {
-  menuDrawer.classList.toggle('active');
-  menuToggle.classList.toggle('open');
-});
-
-if (toggleThemeBtn) {
-  toggleThemeBtn.addEventListener('click', () => {
-    body.classList.toggle('dark');
+  const overlay=document.getElementById('overlay');
+  const modalBox=document.getElementById('modalBox');
+  function openModal(title,body){
+    modalBox.innerHTML=`<h3>${title}</h3><p>${body}</p><button id='closeModal'>Close</button>`;
+    overlay.style.display='flex';
+    document.getElementById('closeModal').onclick=()=>overlay.style.display='none';
+  }
+  document.getElementById('getStarted').onclick=()=>openModal('Get Started','Welcome to Digit Wallet prototype.');
+  document.querySelectorAll('.action-btn').forEach(btn=>{
+    btn.onclick=()=>openModal(btn.dataset.action,`“${btn.dataset.action}” action tapped.`);
   });
-}
-
-document.getElementById('getStarted').addEventListener('click', () => {
-  alert('Welcome to Digit — Explore your wallet and test all features!');
-});
+  document.querySelectorAll('.offer-btn').forEach(btn=>{
+    btn.onclick=()=>openModal('Offer Purchase','You tapped “Buy” — simulate purchase flow.');
+  });
+  const navItems=document.querySelectorAll('.nav-item');
+  const screens=['walletScreen','activitiesScreen','offersScreen','moreScreen'];
+  navItems.forEach(item=>{
+    item.onclick=()=>{
+      navItems.forEach(i=>i.classList.remove('active'));
+      item.classList.add('active');
+      screens.forEach(id=>document.getElementById(id).style.display='none');
+      document.getElementById(item.dataset.screen).style.display='block';
+    };
+  });
+  overlay.onclick=e=>{if(e.target===overlay)overlay.style.display='none';};
 </script>
 </body>
 </html>
